@@ -1,1 +1,519 @@
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>波场靓号 · 任意前缀后缀定制 · 多重签名安全无忧</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1e1e2a;
+      --text: #e8e8f0;
+      --muted: #9a9ab0;
+      --accent: #ff2d55;
+      --accent2: #00d4ff;
+      --success: #00e676;
+      --gradient: linear-gradient(135deg, #ff2d55, #00d4ff);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .glow-1 { top: -200px; left: -200px; background: var(--accent); }
+    .glow-2 { bottom: -200px; right: -200px; background: var(--accent2); }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255, 45, 85, 0.15);
+      border: 1px solid rgba(255, 45, 85, 0.4);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.25;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+
+    .subtitle {
+      font-size: 1.12rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* 联系购买 - 置顶 */
+    .cta-top {
+      background: linear-gradient(145deg, #16161f, #0f0f16);
+      border: 1px solid rgba(255, 45, 85, 0.35);
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin-bottom: 40px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(255, 45, 85, 0.12);
+    }
+
+    .cta-top h2 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .cta-top p {
+      color: var(--muted);
+      font-size: 0.98rem;
+      margin-bottom: 20px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 40px;
+      background: var(--gradient);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.08rem;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(255, 45, 85, 0.35);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255, 45, 85, 0.5);
+    }
+
+    .contact-tip {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* 安全卡片 */
+    .security-card {
+      background: linear-gradient(145deg, #16161f, #0f0f16);
+      border: 1px solid rgba(0, 230, 118, 0.25);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 40px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      box-shadow: 0 0 40px rgba(0, 230, 118, 0.08);
+    }
+
+    .security-icon {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(0, 230, 118, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .security-card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: var(--success);
+    }
+
+    .security-card p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    /* 定制强调 */
+    .custom-card {
+      background: var(--card);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .custom-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #00d4ff, #ff2d55);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .custom-card p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 620px;
+      margin: 0 auto 18px;
+    }
+
+    .custom-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .tag {
+      padding: 6px 14px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 999px;
+      font-size: 0.88rem;
+      color: var(--accent2);
+    }
+
+    /* 好处 */
+    .section-title {
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 32px;
+      font-size: 1.02rem;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 18px;
+      margin-bottom: 50px;
+    }
+
+    .benefit-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 22px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benefit-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .benefit-card:hover {
+      border-color: rgba(255, 45, 85, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .benefit-card:hover::before {
+      opacity: 1;
+    }
+
+    .benefit-icon {
+      font-size: 30px;
+      margin-bottom: 14px;
+    }
+
+    .benefit-card h3 {
+      font-size: 1.12rem;
+      margin-bottom: 8px;
+    }
+
+    .benefit-card p {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    /* 优势 */
+    .advantages {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      margin-bottom: 40px;
+    }
+
+    .advantages h2 {
+      font-size: 1.45rem;
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .adv-list {
+      list-style: none;
+      display: grid;
+      gap: 14px;
+    }
+
+    .adv-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .adv-list li:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .adv-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .adv-list strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .adv-list span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* 底部再次CTA */
+    .cta-bottom {
+      text-align: center;
+      padding: 32px 24px;
+      background: linear-gradient(145deg, #16161f, #0f0f16);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .cta-bottom h2 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .cta-bottom p {
+      color: var(--muted);
+      margin-bottom: 22px;
+      font-size: 0.98rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      .security-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .container {
+        padding: 28px 16px 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="container">
+    <header>
+      <div class="badge">TRON · 波场靓号专属</div>
+      <h1>波场靓号<br>任意前缀 · 任意后缀 · 完全定制</h1>
+      <p class="subtitle">想要什么就定制什么！支持任意地址前缀与后缀组合，配合多重签名，安全无忧，极速交付。</p>
+    </header>
+
+    <!-- 联系购买 置顶 -->
+    <div class="cta-top">
+      <h2>立即联系购买专属靓号</h2>
+      <p>支持任意前缀、后缀定制 · 多重签名安全加持 · 快速交付</p>
+	  <p>新客咨询免费赠送7A豹子号！</p>
+      <a href="https://t.me/usdt_lh66" target="_blank" class="cta-btn">咨询联系 Telegram:@usdt_lh66</a>
+    </div>
+
+    <!-- 安全强调 -->
+    <div class="security-card">
+      <div class="security-icon">🛡️</div>
+      <div>
+        <h2>多重签名加持 · 安全无忧</h2>
+        <p>
+          波场靓号可轻松开启<strong>多重签名</strong>保护。即使地址再靓、再显眼，也无需担心被盯上。
+          资产转移需多方共同授权，私钥分散保管，彻底杜绝单点风险。靓号与安全完美结合，让你安心展示、放心使用。
+        </p>
+      </div>
+    </div>
+
+    <!-- 任意前缀后缀定制 -->
+    <div class="custom-card">
+      <h2>支持任意前缀 · 任意后缀 · 完全定制</h2>
+      <p>
+        不再局限于固定模式！无论你想要开头连续数字、结尾对称字符、中间特殊组合，还是品牌名、生日、幸运数字……我们都能为你生成<strong>完全符合需求</strong>的波场靓号。
+      </p>
+      <div class="custom-tags">
+        <span class="tag">任意前缀</span>
+        <span class="tag">任意后缀</span>
+        <span class="tag">对称靓号</span>
+        <span class="tag">生日号</span>
+        <span class="tag">品牌号</span>
+        <span class="tag">连续数字</span>
+        <span class="tag">字母组合</span>
+        <span class="tag">专属定制</span>
+      </div>
+    </div>
+
+    <!-- 好处 -->
+    <h2 class="section-title">靓号的核心好处</h2>
+    <p class="section-desc">不只是好看，更是实用与价值的双重提升</p>
+
+    <div class="benefits">
+      <div class="benefit-card">
+        <div class="benefit-icon">✨</div>
+        <h3>一眼识别 · 品牌记忆</h3>
+        <p>特殊前缀、后缀或对称组合，让人过目难忘。无论是个人IP还是项目方，都能快速建立辨识度。</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">💎</div>
+        <h3>彰显身份与实力</h3>
+        <p>在波场生态中，靓号是身份的象征。拥有稀缺定制靓号，自带光环，社交与合作中更易获得信任。</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🎯</div>
+        <h3>任意前缀后缀定制</h3>
+        <p>想要什么就定制什么！支持任意开头、结尾组合，真正做到独一无二的专属地址。</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📈</div>
+        <h3>长期资产增值潜力</h3>
+        <p>优质定制靓号具有稀缺性与收藏价值。随着波场生态发展，精品地址往往具备更高流通价值。</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔗</div>
+        <h3>提升转账体验</h3>
+        <p>短地址、重复数字或有意义组合，降低转账错误率，使用更便捷，接收方也更容易记住。</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🔒</div>
+        <h3>多重签名双重保障</h3>
+        <p>定制靓号可无缝接入波场多重签名机制，既保留展示优势，又实现资产最高级别安全防护。</p>
+      </div>
+    </div>
+
+    <!-- 优势 -->
+    <div class="advantages">
+      <h2>为什么选择我们的波场靓号？</h2>
+      <ul class="adv-list">
+        <li>
+          <div class="adv-num">1</div>
+          <div>
+            <strong>真正任意前缀 + 后缀定制</strong>
+            <span>不受固定模板限制，前缀、后缀、中间组合均可按需求生成，满足品牌、个人、项目各种场景。</span>
+          </div>
+        </li>
+        <li>
+          <div class="adv-num">2</div>
+          <div>
+            <strong>多重签名安全无忧</strong>
+            <span>支持官方及第三方多重签名方案，私钥可分片保管，即使公开地址也无惧黑客与误操作。</span>
+          </div>
+        </li>
+        <li>
+          <div class="adv-num">3</div>
+          <div>
+            <strong>真正的稀缺性</strong>
+            <span>靓号生成难度随位数增加呈指数级上升，优质定制地址全球仅此一个，永久独一无二。</span>
+          </div>
+        </li>
+        <li>
+          <div class="adv-num">4</div>
+          <div>
+            <strong>与波场生态深度融合</strong>
+            <span>TRON作为全球领先公链，DeFi、NFT、支付场景丰富，定制靓号在生态中使用场景广泛。</span>
+          </div>
+        </li>
+        <li>
+          <div class="adv-num">5</div>
+          <div>
+            <strong>低成本高辨识度 + 可传承</strong>
+            <span>波场手续费极低，使用成本几乎可忽略。地址永久属于你，可自由转赠、传承。</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <footer>
+      波场靓号 · 任意定制 · 多重签名安全 · 尊贵永恒
+    </footer>
+  </div>
+</body>
+</html>
